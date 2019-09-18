@@ -1,0 +1,24 @@
+name: srntt_vgg19_div2k
+
+model:
+  generator: srntt
+  n_resblocks: 16
+  discriminator: vgg19
+  final_layer: relu_5-1
+  prev_layer: [relu_2-1, relu_3-1, relu_4-1]
+
+data:
+  input_size: [40, 40]
+  scale: 4
+  train:
+    batch_size: 4
+
+  val:
+    batch_size: 1
+
+schedule:
+  use_weights: true
+  concat: true
+  optimizer: Adam
+  beta1: 0.9
+  reconst_loss: L1
