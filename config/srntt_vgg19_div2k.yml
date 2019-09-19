@@ -1,24 +1,36 @@
 name: srntt_vgg19_div2k
+gpus: [0]
+output_dir: log
 
 model:
   generator: srntt
   n_resblocks: 16
-  discriminator: vgg19
+  need_vgg: False
   final_layer: relu_5-1
   prev_layer: [relu_2-1, relu_3-1, relu_4-1]
 
 data:
-  input_size: [40, 40]
+  input_size: [80, 80]
   scale: 4
+
   train:
-    batch_size: 4
+    name: DIV2K
+    batch_size: 25
+    input_dir: /home/zwj/Data/RefSR/DIV2K/input
+    ref_dir: /home/zwj/Data/RefSR/DIV2K/ref
+    n_workers: 8
 
   val:
-    batch_size: 1
+    name: SET5
+    input_dir: /home/zwj/Data/benchmark/Set5
+    n_workers: 4
 
 schedule:
   use_weights: true
   concat: true
+  lr: 1e-4
   optimizer: Adam
   beta1: 0.9
   reconst_loss: L1
+  init_epoch: 5
+  num_epochs: 100
