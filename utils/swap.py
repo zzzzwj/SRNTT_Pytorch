@@ -18,8 +18,8 @@ class Swap:
         buffer = torch.from_numpy(feature_map).permute(2, 0, 1).unsqueeze(0)
         # 1, c, h, w => 1, c, k, k, L
         patches = F.unfold(buffer, self.patch_size, stride=self.stride).view(1, c, self.patch_size, self.patch_size, -1)
-        # 1, c, k, k, L => 1, k, k, L*c
-        return patches.permute(0, 2, 3, 4, 1).view(1, self.patch_size, self.patch_size, -1).squeeze().numpy()
+        # 1, c, k, k, L => 1, k, k, c, L
+        return patches.permute(0, 2, 3, 1, 4).squeeze().numpy()
 
         # patches = []
         # for id_r in range(0, h - self.patch_size + 1, self.stride):

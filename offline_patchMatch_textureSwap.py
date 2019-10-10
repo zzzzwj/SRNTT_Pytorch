@@ -88,7 +88,8 @@ for i in range(n_files):
         content=map_in_sr,
         style=[map_ref[-1]],
         condition=[map_ref_sr],
-        other_styles=other_style
+        other_styles=other_style,
+        is_weight=True
     )
 
     # save maps
