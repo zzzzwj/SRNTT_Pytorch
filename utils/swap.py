@@ -12,12 +12,20 @@ class Swap:
     def style2patches(self, feature_map=None):
         if feature_map is None:
             feature_map = self.style
+
         h, w, c = feature_map.shape
-        patches = []
-        for id_r in range(0, h - self.patch_size + 1, self.stride):
-            for id_c in range(0, w - self.patch_size + 1, self.stride):
-                patches.append(feature_map[id_r:id_r+self.patch_size, id_c:id_c+self.patch_size, :])
-        return np.stack(patches, axis=-1)
+        # h, w, c => 1, c, h, w
+        buffer = torch.from_numpy(feature_map).permute(2, 0, 1).unsqueeze(0)
+        # 1, c, h, w => 1, c, k, k, L
+        patches = F.unfold(buffer, self.patch_size, stride=self.stride).view(1, c, self.patch_size, self.patch_size, -1)
+        # 1, c, k, k, L => 1, k, k, L*c
+        return patches.permute(0, 2, 3, 4, 1).view(1, self.patch_size, self.patch_size, -1).squeeze().numpy()
+
+        # patches = []
+        # for id_r in range(0, h - self.patch_size + 1, self.stride):
+        #     for id_c in range(0, w - self.patch_size + 1, self.stride):
+        #         patches.append(feature_map[id_r:id_r+self.patch_size, id_c:id_c+self.patch_size, :])
+        # return np.stack(patches, axis=-1)
 
     def conditional_swap_multi_layer(self, content, style, condition, patch_size=3, stride=1, other_styles=None,
                                      is_weight=False):
@@ -72,9 +80,11 @@ class Swap:
             #     corr = self.conv.eval({self.conv_input: [self.content], self.conv_filter: batch}, session=self.sess)
             # else:
             #     corr = self.conv.eval({self.conv_input: [self.content], self.conv_filter: batch})
+            batch = torch.from_numpy(batch.transpose((3, 2, 0, 1))).cuda()
+            content = torch.from_numpy(content.transpose((2, 0, 1))).unsqueeze(0).cuda()
             corr = F.conv2d(content, batch, stride=(self.stride, self.stride))
+            corr = corr.cpu().squeeze().numpy().transpose((1, 2, 0))
 
-            corr = np.squeeze(corr)
             max_idx_tmp = np.argmax(corr, axis=-1) + idx
             max_val_tmp = np.max(corr, axis=-1)
             del corr, batch

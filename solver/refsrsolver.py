@@ -21,23 +21,27 @@ class RefSRSolver(BaseSolver):
         self.vgg = None
         # self.vgg = VGG19(cfg['model']['final_layer'], cfg['model']['prev_layer'], True).cuda()
         params = list(self.srntt.content_extractor.parameters()) + list(self.srntt.reconstructor.parameters())
+        self.init_epoch = self.cfg['schedule']['init_epoch']
         self.optimizer = torch.optim.Adam(params, lr=cfg['schedule']['lr'])
         self.reconst_loss = nn.L1Loss()
 
     def train(self):
-        with tqdm(total=len(self.train_loader), miniters=1,
-                  desc='Train Epoch: [{}/{}]'.format(self.epoch, self.max_epochs)) as t:
-            for lr, hr in self.train_loader:
-                lr, hr = lr.cuda(), hr.cuda()
-                self.srntt.train()
-                self.optimizer.zero_grad()
-                sr, _ = self.srntt(lr, None, None)
-                loss = self.reconst_loss(sr, hr)
-                t.set_postfix_str("Batch loss {:.4f}".format(loss.item()))
-                t.update()
+        if(self.epoch <= self.init_epoch):
+            with tqdm(total=len(self.train_loader), miniters=1,
+                      desc='Initial Training Epoch: [{}/{}]'.format(self.epoch, self.max_epochs)) as t:
+                for data in self.train_loader:
+                    lr, hr = data['lr'].cuda(), data['hr'].cuda()
+                    self.srntt.train()
+                    self.optimizer.zero_grad()
+                    sr, _ = self.srntt(lr, None, None)
+                    loss = self.reconst_loss(sr, hr)
+                    t.set_postfix_str("Batch loss {:.4f}".format(loss.item()))
+                    t.update()
 
-                loss.backward()
-                self.optimizer.step()
+                    loss.backward()
+                    self.optimizer.step()
+        else:
+            pass
 
     def eval(self):
         with tqdm(total=len(self.val_loader), miniters=1,

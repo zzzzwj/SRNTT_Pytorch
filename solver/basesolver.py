@@ -52,13 +52,12 @@ class BaseSolver:
                 f.write('Epoch {:03d}: PSNR={:.8f}, SSIM={:.8f}\n'.format(self.records['Epoch'][i],
                                                                           self.records['PSNR'][i],
                                                                           self.records['SSIM'][i]))
-        plt.figure()
-        plt.plot(self.records['Epoch'], self.records['PSNR'])
-        plt.savefig(os.path.join(self.log_dir, 'PSNRCurve.pdf'))
 
-        plt.figure()
-        plt.plot(self.records['Epoch'], self.records['SSIM'])
-        plt.savefig(os.path.join(self.log_dir, 'SSIMCurve.pdf'))
+        utils.draw_curve_and_save(self.records['Epoch'], self.records['PSNR'], 'PSNR',
+                                  os.path.join(self.log_dir, 'PSNR-Curve.pdf'), 0.1)
+
+        utils.draw_curve_and_save(self.records['Epoch'], self.records['SSIM'], 'SSIM',
+                                  os.path.join(self.log_dir, 'SSIM-Curve.pdf'), 0.001)
 
     def train(self):
         raise NotImplementedError
@@ -73,3 +72,4 @@ class BaseSolver:
             self.save_checkpoint()
             self.save_records()
             self.epoch += 1
+        self.logger.log('Training done.')

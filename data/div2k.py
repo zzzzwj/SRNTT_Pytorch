@@ -13,9 +13,11 @@ class DIV2K(Dataset):
         self.input_root = cfg['input_dir']
         self.scale = scale
         self.ref_root = cfg['ref_dir']
+        self.map_root = cfg['map_dir']
 
         self.files_input = sorted(glob(os.path.join(self.input_root, '*.png')))
         self.files_ref = sorted(glob(os.path.join(self.ref_root, '*.png')))
+        self.maps = sorted(glob(os.path.join(self.map_root, )))
 
     def __len__(self):
         return len(self.files_input)
@@ -29,7 +31,7 @@ class DIV2K(Dataset):
         # normalized to [-1, 1]
         img_lr = img_lr / 127.5 - 1
         img_hr = img_hr / 127.5 - 1
-        return img_lr, img_hr
+        return {'lr': img_lr, 'hr': img_hr, 'ref': None, 'map': None}
 
 
 if __name__ == '__main__':

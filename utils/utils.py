@@ -2,6 +2,8 @@ import os
 import cv2
 import math
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
 
 
 def calculate_psnr(img1, img2, pixel_range=255, color_mode='rgb'):
@@ -77,6 +79,31 @@ def calculate_ssim(img1, img2, pixel_range=255):
             return ssim(np.squeeze(img1), np.squeeze(img2), pixel_range)
     else:
         raise ValueError('Wrong input image dimensions.')
+
+
+def draw_curve_and_save(x, y, title, filename, precision):
+    if not isinstance(x, np.ndarray):
+        x = np.array(x).astype(np.int32)
+    if not isinstance(y, np.ndarray):
+        y = np.array(y)
+    fig = plt.figure(figsize=(16,12))
+    ax = fig.add_subplot(111)
+    ax.set_title(title)
+    max_y = np.ceil(y.max() / precision) * precision
+    min_y = np.floor(y.min() / precision) * precision
+    major_y_step = (max_y - min_y) / 10
+    if major_y_step < 0.1:
+        major_y_step = 0.1
+    ax.yaxis.set_major_locator(MultipleLocator(major_y_step))
+    ax.yaxis.set_minor_locator(MultipleLocator(major_y_step / 5))
+    ax.xaxis.grid(True, which='major')
+    ax.yaxis.grid(True, which='both')
+    # ax.legend()
+    if(x.shape[0] >= 2):
+        axis_range = [x.min(), x.max(), min_y, max_y]
+        ax.axis(axis_range)
+    ax.plot(x, y)
+    plt.savefig(filename)
 
 
 class Logger:
