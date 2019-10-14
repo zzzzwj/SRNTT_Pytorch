@@ -5,7 +5,9 @@ Raw code in tensorflow can be found [here](https://github.com/ZZUTK/SRNTT).
 
 ---
 
-*offline_patchMatch_textureSwap.py has been uploaded. However it consumes huge space on disk when generating Ref-DIV2K dataset (100MB per picture). I'll try to find out if there're some bugs in this script.*
+*offline_patchMatch_textureSwap.py has been uploaded. ~~However it consumes huge space on disk when generating Ref-DIV2K dataset (100MB per picture). I'll try to find out if there're some bugs in this script.~~*
+
+Because there are so many channels at each scale, the size of npz file is actually this large. Under this condition, I can't store the whole dataset in my hard disk (~800GB left). So next I'll try to use part of DIV2K (with reference pic) or CUFED.
 
 ---
 
