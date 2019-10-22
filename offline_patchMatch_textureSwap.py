@@ -14,7 +14,7 @@ from model.srntt import SRNTT
 
 
 parser = argparse.ArgumentParser('offline_patchMatch_textureSwap')
-parser.add_argument('--data_folder', type=str, default='/home/zwj/Data/RefSR/DIV2K', help='The dir of dataset: CUFED or DIV2K')
+parser.add_argument('--data_folder', type=str, default='/home/zwj/Data/RefSR/DIV2K_small', help='The dir of dataset: CUFED or DIV2K')
 args = parser.parse_args()
 
 data_folder = args.data_folder

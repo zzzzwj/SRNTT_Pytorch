@@ -1,22 +1,18 @@
-name: srntt_vgg19_div2k
+name: srntt_sisr_only
 gpus: [0]
 output_dir: log
 
 model:
   generator: srntt
   n_resblocks: 16
-  need_vgg: False
-  final_layer: relu_5-1
-  prev_layer: [relu_1-1, relu_2-1, relu_3-1, relu_4-1]
 
 data:
   input_size: [80, 80]
   scale: 4
 
   train:
-    name: DIV2KRef
+    name: DIV2K
     batch_size: 25
-    use_weight: false
     input_dir: /home/zwj/Data/RefSR/DIV2K_small/input
     ref_dir: /home/zwj/Data/RefSR/DIV2K_small/ref
     map_dir: /home/zwj/Data/RefSR/DIV2K_small/map_321
@@ -35,9 +31,4 @@ schedule:
   optimizer: Adam
   beta1: 0.9
   reconst_loss: L1
-  init_epoch: 5
   num_epochs: 10
-  is_WGAN_GP: true
-  # (perceptual loss, texture loss, adversarial loss, back projection loss, reconstruction_loss)
-  loss_weights: [1e-4, 1e-4, 1e-6, 1., 1.]
-  use_lower_layers_in_per_loss: false

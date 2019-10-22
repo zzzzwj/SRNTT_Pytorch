@@ -11,10 +11,9 @@ def sigmoid_cross_entropy_with_logits(logits, labels):
 
 
 class AdvLoss(nn.Module):
-    def __init__(self, is_WGAN_GP, param_WGAN_GP=None):
+    def __init__(self, is_WGAN_GP):
         super(AdvLoss, self).__init__()
         self.is_WGAN_WP = is_WGAN_GP
-        self.param_WGAN_GP = param_WGAN_GP
 
     def forward(self, srntt_out, ground_truth, d_fake_logits, d_real_logits, discriminator):
         if self.is_WGAN_WP:

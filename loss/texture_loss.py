@@ -24,7 +24,7 @@ class TextureLoss(nn.Module):
             self.a = torch.from_numpy(np.array([-20, -20, -20]))
             self.b = torch.from_numpy(np.array([0.65, 0.65, 0.65]))
 
-    def forward(self, sr, hr, vgg_outputs, maps, weights=None):
+    def forward(self, vgg_outputs, maps, weights=None):
         if self.use_weight_map:
             assert weights is not None and len(maps) == 3
 

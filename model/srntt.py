@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class ResBlock(nn.Module):
     def __init__(self, input_channel, output_channel, act):
         super(ResBlock, self).__init__()
